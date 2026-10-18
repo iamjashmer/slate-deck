@@ -1,0 +1,24 @@
+<main class="stage">
+  <div class="stack">
+    <span class="eyebrow">Quick check</span>
+    <h2 class="h2">Which fraction is larger?</h2>
+  </div>
+  <div class="choices" id="quiz" data-answer="b">
+    <button class="choice" data-id="a"><span class="key">A</span>2/3</button>
+    <button class="choice" data-id="b"><span class="key">B</span>3/4</button>
+    <button class="choice" data-id="c"><span class="key">C</span>They are equal</button>
+  </div>
+  <p class="feedback" id="feedback" aria-live="polite"></p>
+</main>
+<script>
+  const quiz = document.getElementById('quiz');
+  quiz.addEventListener('click', (event) => {
+    const choice = event.target.closest('.choice');
+    if (!choice) return;
+    const right = choice.dataset.id === quiz.dataset.answer;
+    choice.classList.add(right ? 'is-correct' : 'is-wrong');
+    const feedback = document.getElementById('feedback');
+    feedback.textContent = right ? 'Yes. 9/12 is more than 8/12.' : 'Not quite. Write both in twelfths.';
+    feedback.style.color = right ? 'var(--success)' : 'var(--error)';
+  });
+</script>
