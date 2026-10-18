@@ -28,6 +28,7 @@ Slate is a macOS presentation app where every slide is an HTML module styled by 
 - Keep each slide self-contained: its own `<style>` and `<script>` if needed, unique ids within the slide, no `localStorage`, no `position: fixed`.
 - Prefer no network: no CDN scripts or remote images unless the user asks; slides may be presented offline. Put images in `assets/` and reference them as `assets/<file>`.
 - Use `data-step` for points revealed one click at a time. Put anything the user may want to drag freely in a box (`class="box" data-box` with `left`/`top`).
+- When a script shows words on the slide, keep them in plain strings or `data-` attributes (`'Nice work!'`, `data-caption="…"`), not split across pieces, so the user can retype them on the slide in Slate. Text a script works out (numbers, scores) can only be changed in the HTML.
 - Never put presenter notes or private remarks on the slide itself; they go in `notes/`.
 
 ## References
