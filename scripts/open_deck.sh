@@ -5,8 +5,7 @@
 set -euo pipefail
 
 # Where people download Slate.
-# PLACEHOLDER: replace with the real download page once the DMG is online.
-DOWNLOAD_URL="https://example.com/slate (download link coming soon)"
+DOWNLOAD_URL="https://github.com/iamjashmer/slate-releases/releases/latest"
 
 deck=${1:?usage: open_deck.sh <Deck.slate>}
 [[ -d $deck ]] || { echo "No deck folder at $deck" >&2; exit 1; }

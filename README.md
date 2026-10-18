@@ -2,8 +2,7 @@
 
 A [Claude Code](https://claude.com/claude-code) skill that designs presentations for **Slate**, a macOS presentation app where every slide is a web page. Describe a talk or a lesson, and Claude writes the whole deck (slides, interactions and presenter notes), checks it, and opens it in Slate, ready to edit and present.
 
-**Get Slate:** download link coming soon. <!-- PLACEHOLDER: replace with the Slate download page -->
-Slate needs macOS 15 or later.
+**Get Slate:** [download Slate for Mac](https://github.com/iamjashmer/slate-releases/releases/latest/download/Slate.dmg) (macOS 15 or later). Install notes and every version are on the [Slate releases page](https://github.com/iamjashmer/slate-releases/releases).
 
 ## Install the skill
 
