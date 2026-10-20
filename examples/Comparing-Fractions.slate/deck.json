@@ -6,7 +6,8 @@
     { "file": "01-title.html", "title": "Title" },
     { "file": "02-how-to-compare.html", "title": "How to compare" },
     { "file": "03-twelfths.html", "title": "Twelfths table" },
-    { "file": "04-quick-check.html", "title": "Quick check" },
-    { "file": "05-exit-ticket.html", "title": "Exit ticket results" }
+    { "file": "04-turn-and-talk.html", "title": "Turn and talk" },
+    { "file": "05-quick-check.html", "title": "Quick check" },
+    { "file": "06-exit-ticket.html", "title": "Exit ticket results" }
   ]
 }

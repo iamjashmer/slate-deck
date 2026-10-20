@@ -67,3 +67,5 @@ Put files in `assets/` and reference them from slides as `assets/<name>`. Use si
 - `slate.next()`, `slate.prev()`, `slate.goto(n)` from a slide script.
 - `<figure class="chart" data-chart>` with a JSON script inside is drawn as a bar, line or pie chart (see components.md).
 - `class="box" data-box` with `left` / `top` (and `width` / `height`) in stage pixels makes an element a free-floating box.
+- `<avatar-timer>` with `<script type="module" src="_slate/avatar/avatar-timer.js"></script>` is the living avatar presenting a countdown or a talk pace clock (Slate 1.1 or later; see components.md).
+- `slate.clock()` returns the presenter-view timer while presenting, as `{ elapsed, running }` (seconds), or `null` otherwise.

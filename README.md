@@ -45,7 +45,9 @@ Comparing-Fractions.slate/
   theme.css        optional deck CSS
 ```
 
-See [`examples/Comparing-Fractions.slate`](examples/Comparing-Fractions.slate) for a finished five-slide lesson, [`references/format.md`](references/format.md) for the format, and [`references/components.md`](references/components.md) for the slide building blocks: titles, cards, step-by-step builds, quizzes, tables, charts, pictures and free-floating boxes.
+See [`examples/Comparing-Fractions.slate`](examples/Comparing-Fractions.slate) for a finished six-slide lesson (with an avatar timer), [`references/format.md`](references/format.md) for the format, and [`references/components.md`](references/components.md) for the slide building blocks: titles, cards, step-by-step builds, quizzes, tables, charts, pictures and free-floating boxes.
+
+**Avatar timers.** For timed activities, Claude adds Slate's living avatar presenting a countdown clock. He cheers at halfway, warns near the end and celebrates at zero. For longer talks, Claude adds a few small pace clocks that follow the presenter timer and tell you whether you're ahead or behind. They need Slate 1.1 or later.
 
 Themes: `april`, `april-night`, `chalkboard`, `notebook`, `ocean`, `sunrise`, `minimal`, `classic`.
 

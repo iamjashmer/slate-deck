@@ -16,6 +16,22 @@ from pathlib import Path
 THEMES = {"april", "april-night", "chalkboard", "notebook", "ocean", "sunrise", "minimal", "classic", "light", "dark"}
 TRANSITIONS = {"none", "fade", "push", "zoom"}
 CHART_TYPES = {"bar", "line", "pie"}
+AVATAR_SCRIPT = "_slate/avatar/avatar-timer.js"
+
+
+def seconds(value):
+    """A time the way <avatar-timer> reads it ("5:00", "90", "1:30:00", "5m",
+    "1m 30s"), in seconds, or None when it is not one."""
+    s = (value or "").strip().lower()
+    if re.fullmatch(r"\d+(\.\d+)?", s):
+        return float(s)
+    if re.fullmatch(r"\d+(:\d{1,2}){1,2}", s):
+        total = 0
+        for part in s.split(":"):
+            total = total * 60 + int(part)
+        return total
+    parts = re.findall(r"(\d+(?:\.\d+)?)\s*([hms])[a-z]*", s)
+    return sum(float(n) * {"h": 3600, "m": 60, "s": 1}[unit] for n, unit in parts) if parts else None
 
 
 class SlideScan(HTMLParser):
@@ -29,6 +45,8 @@ class SlideScan(HTMLParser):
         self.charts = 0
         self.chart_json = []    # text of JSON scripts inside data-chart figures
         self.text = []
+        self.timers = []        # attributes of <avatar-timer> elements
+        self.scripts = []       # (src, type) of <script src>
         self._in_chart = 0
         self._json_script = False
 
@@ -39,6 +57,10 @@ class SlideScan(HTMLParser):
                 self.urls.append((tag, name, a[name]))
         if a.get("id"):
             self.ids.append(a["id"])
+        if tag == "avatar-timer":
+            self.timers.append(a)
+        if tag == "script" and a.get("src"):
+            self.scripts.append((a["src"], (a.get("type") or "").strip().lower()))
         if "data-box" in a:
             self.boxes.append(a.get("style") or "")
         if "data-chart" in a:
@@ -105,6 +127,7 @@ def main():
 
     seen_ids = set()
     notes_missing = []
+    pace_lengths = {}   # pace-id -> {duration: [slide numbers]}
     for n, entry in enumerate(entries, 1):
         where = f"slide {n}"
         if not isinstance(entry, dict) or "file" not in entry:
@@ -173,12 +196,41 @@ def main():
                     err(f"{where}: chart values must be numbers")
             except (json.JSONDecodeError, AttributeError):
                 err(f"{where}: chart data is not valid JSON")
+        if scan.timers:
+            loaded = [kind for src, kind in scan.scripts if src.split("?")[0].endswith(AVATAR_SCRIPT)]
+            if not loaded:
+                err(f"{where}: <avatar-timer> needs <script type=\"module\" src=\"{AVATAR_SCRIPT}\"></script> on the slide")
+            elif "module" not in loaded:
+                err(f"{where}: load {AVATAR_SCRIPT} with type=\"module\"")
+        for t in scan.timers:
+            mode = t.get("mode") or "countdown"
+            if mode not in ("countdown", "pace"):
+                err(f"{where}: avatar-timer mode must be countdown or pace, not '{mode}'")
+                continue
+            length = seconds(t.get("duration")) if t.get("duration") else (1200 if mode == "pace" else 300)
+            if not length:
+                err(f"{where}: avatar-timer duration '{t.get('duration')}' is not a time like 3:00 or 90")
+                continue
+            if mode == "pace":
+                pace_lengths.setdefault(t.get("pace-id") or "talk", {}).setdefault(length, []).append(n)
+                if t.get("expect") is not None:
+                    expect = seconds(t.get("expect"))
+                    if expect is None:
+                        err(f"{where}: avatar-timer expect '{t.get('expect')}' is not a time like 8:00")
+                    elif expect > length:
+                        warn(f"{where}: avatar-timer expect {t.get('expect')} is after the end of the {t.get('duration') or '20:00'} talk")
+            elif t.get("expect") is not None:
+                warn(f"{where}: expect only applies to mode=\"pace\"")
         literal_colors = re.findall(r"#[0-9a-fA-F]{6}\b|rgb\(", html)
         if len(literal_colors) > 3:
             warn(f"{where}: {len(literal_colors)} literal colors; use theme tokens like var(--navy) so the slide follows the theme")
         if not full and "stage" not in html:
             warn(f"{where}: no <main class=\"stage\">; content will sit against the top-left edge")
 
+    for pace_id, lengths in pace_lengths.items():
+        if len(lengths) > 1:
+            found = "; ".join(f"{int(d) // 60}:{int(d) % 60:02d} on slide(s) {', '.join(map(str, ns))}" for d, ns in lengths.items())
+            warn(f"pace clocks share one talk clock ('{pace_id}') but have different durations ({found}); give them all the talk's length")
     if notes_missing:
         warn(f"no presenter notes for slide(s) {', '.join(map(str, notes_missing))}")
     if assets_dir.is_dir():

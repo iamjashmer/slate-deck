@@ -9,12 +9,12 @@ Slate is a macOS presentation app where every slide is an HTML module styled by 
 
 ## Workflow
 
-1. **Brief.** Get the topic, the audience, how long the talk is (about one slide per minute), the theme (see below), and whether they want interactive slides (quizzes, polls, timers, sliders). Ask only for what you cannot infer. Use real facts only; mark anything unknown as an example rather than inventing numbers, quotes or credentials.
+1. **Brief.** Get the topic, the audience, how long the talk is (about one slide per minute), the theme (see below), and whether they want interactive slides (quizzes, polls, timers, sliders) or a pace clock that keeps the talk on time. Ask only for what you cannot infer. Use real facts only; mark anything unknown as an example rather than inventing numbers, quotes or credentials.
 2. **Outline.** Write the slide list in chat: number, title, one-line purpose, and the module each slide uses. Keep one idea per slide. Confirm it when the deck is long or the brief was thin; otherwise go on.
 3. **Write the deck** as `<Name>.slate/` (default location `decks/` in the current project unless the user names one). Follow `references/format.md` for the files and `references/components.md` for the HTML building blocks. Every slide gets presenter notes: what to say, in the speaker's voice, plus any answer keys or timings.
 4. **Validate.** Run `python3 <this skill's folder>/scripts/validate_deck.py <Name>.slate` (the skill's folder is the base directory given when the skill loads) and fix every error. Read the warnings and fix those that matter.
 5. **Open it.** Run `bash <this skill's folder>/scripts/open_deck.sh <Name>.slate`. It opens the deck in the installed Slate (or the app at `$SLATE_APP`). If Slate is not installed, the script prints where to download it; pass that on to the user, and still give them the deck's path.
-6. **Report.** List the slides, the theme, which slides are interactive, and anything marked as an example for the user to replace. Tell them: Play with ⌥⌘P; in Edit mode they can click any text to change it, drag anything to move it, and switch themes from the Deck panel.
+6. **Report.** List the slides, the theme, which slides are interactive (and which have avatar timers or pace clocks), and anything marked as an example for the user to replace. Avatar timers need Slate 1.1 or later. Tell them: Play with ⌥⌘P; in Edit mode they can click any text to change it, drag anything to move it, and switch themes from the Deck panel.
 
 ## Themes
 
@@ -29,12 +29,13 @@ Slate is a macOS presentation app where every slide is an HTML module styled by 
 - Prefer no network: no CDN scripts or remote images unless the user asks; slides may be presented offline. Put images in `assets/` and reference them as `assets/<file>`.
 - Use `data-step` for points revealed one click at a time. Put anything the user may want to drag freely in a box (`class="box" data-box` with `left`/`top`).
 - When a script shows words on the slide, keep them in plain strings or `data-` attributes (`'Nice work!'`, `data-caption="…"`), not split across pieces, so the user can retype them on the slide in Slate. Text a script works out (numbers, scores) can only be changed in the HTML.
+- For timed activities use the **avatar timer**, and for keeping the talk on time a few **avatar pace clocks** (`references/components.md`). Each slide with one loads `<script type="module" src="_slate/avatar/avatar-timer.js"></script>`. Set a pace clock's `expect` from the outline's timings, and give every pace clock the talk's full length as `duration`.
 - Never put presenter notes or private remarks on the slide itself; they go in `notes/`.
 
 ## References
 
 - `references/format.md`: the `.slate` folder, `deck.json`, notes, transitions and assets.
-- `references/components.md`: classes, tokens and ready-made slide patterns (title, section, cards, steps, quiz, poll, timer, table, chart, picture, text box).
+- `references/components.md`: classes, tokens and ready-made slide patterns (title, section, cards, steps, quiz, poll, avatar timer, pace clock, table, chart, picture, text box).
 - `scripts/validate_deck.py`: checks a deck before opening it.
 - `scripts/open_deck.sh`: opens a deck in Slate (the app at `$SLATE_APP`, or the installed app).
 - `examples/Comparing-Fractions.slate`: a small finished deck to copy patterns from.
