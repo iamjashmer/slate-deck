@@ -173,5 +173,43 @@ Data lives in a JSON script; Slate draws it in the theme's colors. `type` is `ba
 ```
 Place boxes inside `<main class="stage">` so their coordinates are stage pixels.
 
-### Activity timer, live poll, slider model, embedded page
-Slate's own modules (Slide › New Slide in the app) include a countdown ring, a tap-to-vote poll, an interactive fraction model and a framed web page. When a slide needs one of these, keep the script self-contained and drive every visible state from the theme tokens.
+### Avatar timer (activity countdown)
+Use this for any timed activity. Slate 1.1 and later have a living avatar built in: he stands next to a cute alarm clock and reacts as time runs. He presents it at the start, gives a thumbs up at halfway, warns at 1 minute and at 10 seconds, then celebrates at zero with a chime and confetti. The presenter clicks the clock to start and pause it, also from their live view, and hovers it for reset and +1 minute. Every slide with an avatar timer needs the module script.
+```html
+<main class="stage">
+  <div class="split" style="grid-template-columns: minmax(0, 1fr) 900px; gap: 40px">
+    <div class="stack">
+      <span class="eyebrow">Turn and talk</span>
+      <h2 class="h2">Which is bigger, 3/5 or 5/8?</h2>
+      <ul class="list lead" style="margin-top: 24px">
+        <li>Find a partner next to you</li>
+        <li>Each of you explains one way to compare</li>
+      </ul>
+    </div>
+    <avatar-timer duration="2:00" label="Turn and talk" style="width: 900px"></avatar-timer>
+  </div>
+</main>
+<script type="module" src="_slate/avatar/avatar-timer.js"></script>
+```
+- `duration`: `"3:00"`, `"90"` (seconds), `"1:30:00"`, `"5m"`, `"1m 30s"`. The halfway cheer needs 1 minute or more, the 1-minute warning 2 minutes or more, and the 10-second warning 20 seconds or more.
+- `label`: a few words inside the clock. Match the eyebrow.
+- `autostart`: starts when the slide appears in the show (never while editing). Good for short timers like a 20-second quiz; leave it off when the presenter explains the task first.
+- The width sets the size, and the height follows (about 7 : 8, plus his speech bubble above). 900px suits an activity slide.
+- To put the clock on his left, add `side="right"`. He then stands on the right and points at it.
+- Bubble text can be changed with `text-start`, `text-half`, `text-warn`, `text-final` and `text-end`, for example `text-end="Pencils down!"`. `muted` turns the sound off.
+- The clock keeps its own colors on every theme. To match the deck's accent, add `style="--timer-color: var(--orange)"`.
+- A countdown stops when the presenter leaves its slide. In the notes, say how long the activity is and that clicking the clock starts it.
+
+### Avatar pace clock (talk timing)
+A small avatar with a talk clock in a slide corner. While presenting, it follows the timer in Slate's presenter view, so it starts with the show and pauses and resets with it, with nothing to click. It shows the time left in the talk. `expect` is where the talk should be by this slide. When the slide appears, he says whether the presenter is ahead, on time (within 30 s), a little behind or way behind (over 2 minutes).
+```html
+<div class="box" data-box style="left: 1480px; top: 690px; width: 400px;"><avatar-timer mode="pace" duration="20:00" expect="8:00" style="width: 100%"></avatar-timer><script type="module" src="_slate/avatar/avatar-timer.js"></script></div>
+```
+- `duration` is the whole talk's length. Give every pace clock in the deck the same one.
+- `expect` is the time planned for all the slides before this one. In a 20-minute talk planned at a minute a slide, slide 9 gets `expect="8:00"`.
+- Put pace clocks on a few checkpoint slides (section starts, the middle, before the wrap-up), not on every slide. He reacts each time one appears.
+- Keep the box clear of the slide's content: the bottom-right corner (as above), or `left: 40px` with `side="right"` for the bottom-left.
+- `tolerance="1:00"` widens "on time" from 30 seconds.
+
+### Live poll, slider model, embedded page
+Slate's own modules (Slide › New Slide in the app) include a tap-to-vote poll, an interactive fraction model and a framed web page. When a slide needs one of these, keep the script self-contained and drive every visible state from the theme tokens.
